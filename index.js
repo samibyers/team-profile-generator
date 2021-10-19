@@ -1,5 +1,4 @@
 const inquirer = require('inquirer');
-// const Employee = require('./lib/Employee');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const Manager = require('./lib/Manager');
@@ -44,14 +43,14 @@ function menu() {
             choices: ['Add Engineer', 'Add Intern', 'Finish building team'],  
        },  
     ]).then(answers => {
-        switch (answers.choices) {
+        switch (answers.menu) {
             case 'Add Engineer':
                 getEngineer();
                 break;
             case 'Add Intern':
                 getIntern();
                 break;
-            case 'Finish building team':
+            default: 
                 init();
                 break;
         };
@@ -73,7 +72,7 @@ function getEngineer() {
         {
             type: 'input',
             name: 'email',
-            message: '',  
+            message: 'What is the engineer\'s email?',  
         },
         {
             type: 'input',
@@ -119,6 +118,4 @@ function init() {
 };
 
 startManager();
-// generateManager
-// generateEngineer
-// generateIntern
+
