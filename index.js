@@ -1,12 +1,13 @@
 const inquirer = require('inquirer');
-const Employee = require('./lib/Employee');
+// const Employee = require('./lib/Employee');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const Manager = require('./lib/Manager');
-const test = require('./util/generateHtml');
+const team = require('./util/generateHtml');
 const fs = require('fs');
+const employees = []
 
-function enterManager() {
+function startManager() {
     inquirer.prompt([
        {
             type: 'input',
@@ -28,7 +29,33 @@ function enterManager() {
             name: 'office',
             message: 'What is the team manager\'s office number?',  
        },
-    ]); //then either add engineer, add intern, of finish building team
+    ]).then(({name, id, email, office}) => {
+        employees.push(new Manager(name, id, email, office));
+        menu();
+    });
+};
+
+function menu() {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'menu',
+            message: 'Continue building your team?',
+            choices: ['Add Engineer', 'Add Intern', 'Finish building team'],  
+       },  
+    ]).then(answers => {
+        switch (answers.choices) {
+            case 'Add Engineer':
+                getEngineer();
+                break;
+            case 'Add Intern':
+                getIntern();
+                break;
+            case 'Finish building team':
+                init();
+                break;
+        };
+    });
 };
 
 function getEngineer() {
@@ -51,37 +78,47 @@ function getEngineer() {
         {
             type: 'input',
             name: 'github',
-            message: 'What is the employee\'s github username?',  
+            message: 'What is the employee\'s github username',  
         },
-    ]); //then user is taken back to the menu choices    
+    ]).then(({name, id, email, github}) => {
+        employees.push(new Engineer(name, id, email, github));
+        menu();  
+    });
 };
 
 function getIntern() {
     inquirer.prompt([
         {
             type: 'input',
-            name: '',
-            message: '',  
+            name: 'name',
+            message: 'What is the intern\'s name?',  
         },
         {
             type: 'input',
-            name: '',
-            message: '',  
+            name: 'id',
+            message: 'What is the intern\'s employee id?',  
         },
         {
             type: 'input',
-            name: '',
-            message: '',  
+            name: 'email',
+            message: 'What is the intern\'s email?',  
         },
         {
             type: 'input',
-            name: '',
-            message: '',  
+            name: 'school',
+            message: 'What school does the intern attend?',  
         },
-        {
-            type: 'input',
-            name: '',
-            message: '',  
-        },
-    ])
-}
+    ]).then(({name, id, email, school}) => {
+        employees.push(new Intern(name, id, email, school));
+        menu();  
+    });
+};
+
+function init() {
+    fs.writeFile('./dist/Employees.html', team(employees), (err) => err ? console.log(err) : console.log('Success!'));
+};
+
+startManager();
+// generateManager
+// generateEngineer
+// generateIntern
